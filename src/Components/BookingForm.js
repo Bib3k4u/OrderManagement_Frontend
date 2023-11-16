@@ -22,6 +22,19 @@ const BookingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate phone number
+    const phoneRegex = /^[0-9]+$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error('Phone number must contain only digits');
+      return;
+    }
+
+    // Validate quantity
+    if (formData.quantity <= 0) {
+      toast.error('Quantity must be a positive number');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:3001/createOrder', {
         method: 'POST',
@@ -54,10 +67,11 @@ const BookingForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-md shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Delivery Information</h2>
+    <div className="max-w-lg mx-auto mt-4 p-4 bg-white rounded-md shadow-md">
+      <h2 className="text-2xl font-semibold mb-2 text-center underline">Fill the Form for Booking Order</h2>
+      <h3 className="text-xl font-semibold mb-1 text-center">Delivery Information</h3>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="name" className="block text-gray-600 font-medium mb-2">
             Name of Person
           </label>
@@ -71,7 +85,7 @@ const BookingForm = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="address" className="block text-gray-600 font-medium mb-2">
             Address to Deliver
           </label>
@@ -85,12 +99,12 @@ const BookingForm = () => {
             required
           ></textarea>
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="phone" className="block text-gray-600 font-medium mb-2">
             Phone No.
           </label>
           <input
-            type="text"
+            type="text" // Change to text type to allow only digits
             id="phone"
             name="phone"
             value={formData.phone}
@@ -99,7 +113,7 @@ const BookingForm = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="product" className="block text-gray-600 font-medium mb-2">
             Product
           </label>
@@ -117,7 +131,7 @@ const BookingForm = () => {
             <option value="p4">p4</option>
           </select>
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="quantity" className="block text-gray-600 font-medium mb-2">
             Quantity
           </label>
@@ -133,13 +147,12 @@ const BookingForm = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+          className="w-full bg-[#b76ff6] text-black py-2 px-4 mt-2 rounded-md hover:bg-[#9f3af7] transition duration-300"
         >
           Submit
         </button>
       </form>
       <ToastContainer />
-
     </div>
   );
 };

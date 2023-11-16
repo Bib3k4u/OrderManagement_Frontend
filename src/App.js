@@ -8,7 +8,7 @@ import CompletedOrder from './Pages/CompletedOrder'
 const App = () => {
   return (
     <BrowserRouter>
-    <div className='App'>
+    <div className='App h-min-screen bg-gradient-to-r from-[#D0A2F7] via-[#c182f9] to-[#a64ff2]'>
       <Navbar/>
     <Routes>
       <Route path ='/' element={<BookOrder/>}/>
