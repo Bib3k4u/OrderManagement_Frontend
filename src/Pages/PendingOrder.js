@@ -111,7 +111,7 @@ const PendingOrder = () => {
           </button>
         ))}
       </div>
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="top-right" />
     </div>
   );
 };
