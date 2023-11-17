@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from './Loader';
 
 const BookingForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     address: '',
     phone: '',
-    product: 'p1', // default value
-    quantity: 1, // default value
+    product: 'p1',
+    quantity: 1,
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,22 +23,25 @@ const BookingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when submitting the form
 
     // Validate phone number
     const phoneRegex = /^[0-9]+$/;
     if (!phoneRegex.test(formData.phone)) {
       toast.error('Phone number must contain only digits');
+      setLoading(false); // Set loading back to false after validation
       return;
     }
 
     // Validate quantity
     if (formData.quantity <= 0) {
       toast.error('Quantity must be a positive number');
+      setLoading(false); // Set loading back to false after validation
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3001/createOrder', {
+      const response = await fetch('https://order-manager-api.onrender.com/createOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,10 +50,7 @@ const BookingForm = () => {
       });
 
       if (response.ok) {
-        // Display toast on successful order placement
         toast.success('Order Placed Successfully');
-
-        // Reset the form or perform any other actions after successful submission
         setFormData({
           name: '',
           address: '',
@@ -63,11 +65,15 @@ const BookingForm = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error Placing Order');
+    } finally {
+      setLoading(false); // Set loading back to false after the fetch is completed
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-4 p-4 bg-white rounded-md shadow-md">
+    <div className="relative">
+      {loading && <Loader />} {/* Render the Loader component when loading is true */}
+      <div className={`max-w-lg mx-auto mt-4 p-4 bg-white rounded-md shadow-md ${loading && 'blur'}`}>
       <h2 className="text-2xl font-semibold mb-2 text-center underline">Fill the Form for Booking Order</h2>
       <h3 className="text-xl font-semibold mb-1 text-center">Delivery Information</h3>
       <form onSubmit={handleSubmit}>
@@ -94,7 +100,7 @@ const BookingForm = () => {
             name="address"
             value={formData.address}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+            className="w-full h-16 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             rows="4"
             required
           ></textarea>
@@ -146,13 +152,15 @@ const BookingForm = () => {
           />
         </div>
         <button
-          type="submit"
-          className="w-full bg-[#b76ff6] text-black py-2 px-4 mt-2 rounded-md hover:bg-[#9f3af7] transition duration-300"
-        >
-          Submit
-        </button>
+            type="submit"
+            className="w-full bg-[#b76ff6] text-black py-2 px-4 mt-2 rounded-md hover:bg-[#9f3af7] transition duration-300"
+            disabled={loading}
+          >
+            {loading ? 'Submitting...' : 'Submit'}
+          </button>
       </form>
       <ToastContainer />
+    </div>
     </div>
   );
 };
